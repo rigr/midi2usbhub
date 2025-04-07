@@ -46,7 +46,7 @@ jobs:
       run: |
         mkdir build
         cd build
-        cmake .. -DPICO_BOARD=pico -DPICO_SDK_PATH=${{ env.PICO_SDK_PATH }}
+        cmake .. -DPICO_BOARD=pico -DPICO_SDK_PATH=${{ env.PICO_SDK_PATH }} -DCMAKE_FRESH=ON
         make
 
     - name: Upload UF2 artifact
