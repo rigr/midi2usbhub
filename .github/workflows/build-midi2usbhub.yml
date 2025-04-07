@@ -50,8 +50,8 @@ jobs:
         echo 'set(LIBUSB_INCLUDE_DIR "/usr/include/libusb-1.0" CACHE PATH "Path to libusb include dir" FORCE)' >> CMakeLists.txt
         echo 'message(STATUS "libUSB forced - building with USB support")' >> CMakeLists.txt
         echo 'add_definitions(-DUSE_USB=1)' >> CMakeLists.txt
-        echo 'target_include_directories(${PROJECT_NAME}.elf PRIVATE ${LIBUSB_INCLUDE_DIR} ${CMAKE_CURRENT_LIST_DIR}/src)' >> CMakeLists.txt
-        echo 'target_link_libraries(${PROJECT_NAME}.elf pico_stdlib tinyusb_host tinyusb_board usb_midi_host ${LIBUSB_LIBRARY})' >> CMakeLists.txt
+        echo 'target_include_directories(${PROJECT_NAME} PRIVATE ${LIBUSB_INCLUDE_DIR} ${CMAKE_CURRENT_LIST_DIR}/src)' >> CMakeLists.txt
+        echo 'target_link_libraries(${PROJECT_NAME} pico_stdlib tinyusb_host tinyusb_board usb_midi_host ${LIBUSB_LIBRARY})' >> CMakeLists.txt
         cat CMakeLists.txt
 
     - name: Build the project
