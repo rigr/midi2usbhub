@@ -32,6 +32,13 @@ jobs:
         ls -l /usr/include/libusb-1.0/libusb.h || echo "libusb.h not found"
         ls -l /usr/lib/x86_64-linux-gnu/libusb-1.0.so || echo "libusb-1.0.so not found"
 
+    - name: Ensure submodules are initialized
+      run: |
+        git submodule sync --recursive
+        git submodule update --init --recursive
+        ls -l lib/tinyusb || echo "tinyusb not found"
+        ls -l lib/usb_midi_host || echo "usb_midi_host not found"
+
     - name: Force libusb in CMakeLists.txt
       run: |
         echo 'cmake_minimum_required(VERSION 3.12)' > CMakeLists.txt
