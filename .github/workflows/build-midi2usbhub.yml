@@ -41,13 +41,16 @@ jobs:
         sed -i 's/message(STATUS "libUSB is not found - no USB support will be built")/message(STATUS "libUSB forced - building with USB support")/' CMakeLists.txt
         sed -i 's/target_include_directories(${PROJECT_NAME}.elf PRIVATE ${LIBUSB_INCLUDE_DIR})/target_include_directories(${PROJECT_NAME} PRIVATE ${LIBUSB_INCLUDE_DIR})/' CMakeLists.txt
         sed -i 's/target_link_libraries(${PROJECT_NAME}.elf ${LIBUSB_LIBRARY})/target_link_libraries(${PROJECT_NAME} ${LIBUSB_LIBRARY})/' CMakeLists.txt
+        echo "CMakeLists.txt after modification:"
         cat CMakeLists.txt
         
         # Build immediately in the same step
         mkdir -p build
         cd build
         rm -rf *  # Clear any existing cache
-        cmake .. -DPICO_BOARD=pico -DPICO_SDK_PATH=${{ env.PICO_SDK_PATH }}
+        echo "CMakeLists.txt before cmake:"
+        cat ../CMakeLists.txt  # Verify the file hasn't changed
+        cmake .. -DPICO_BOARD=pico -DPICO_SDK_PATH=${{ env.PICO_SDK_PATH }} -DCMAKE_FRESH=ON
         make
 
     - name: Upload UF2 artifact
