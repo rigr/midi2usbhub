@@ -3,7 +3,7 @@ name: Build midi2usbhub UF2
 on:
   push:
     branches: [ main ]
-  workflow_dispatch:  # Ermöglicht manuelles Auslösen des Workflows
+  workflow_dispatch:
 
 jobs:
   build:
@@ -13,7 +13,7 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
       with:
-        submodules: recursive  # Lädt auch die Submodule (wichtig für pico-sdk)
+        submodules: recursive
 
     - name: Install dependencies
       run: |
@@ -25,13 +25,13 @@ jobs:
         git clone https://github.com/raspberrypi/pico-sdk.git --branch 2.0.0
         cd pico-sdk
         git submodule update --init
-        export PICO_SDK_PATH=$(pwd)
+        echo "PICO_SDK_PATH=$(pwd)" >> $GITHUB_ENV  # Setzt die Umgebungsvariable für nachfolgende Schritte
 
     - name: Build the project
       run: |
         mkdir build
         cd build
-        cmake .. -DPICO_BOARD=pico
+        cmake .. -DPICO_BOARD=pico -DPICO_SDK_PATH=${{ env.PICO_SDK_PATH }}
         make
 
     - name: Upload UF2 artifact
