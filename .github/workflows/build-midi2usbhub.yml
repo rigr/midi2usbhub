@@ -32,12 +32,26 @@ jobs:
         ls -l /usr/include/libusb-1.0/libusb.h || echo "libusb.h not found"
         ls -l /usr/lib/x86_64-linux-gnu/libusb-1.0.so || echo "libusb-1.0.so not found"
 
-    - name: Modify CMakeLists.txt to force libusb and add test message
+    - name: Force libusb in CMakeLists.txt
       run: |
-        sed -i 's/find_library(LIBUSB_LIBRARY NAMES usb-1.0 libusb-1.0)/set(LIBUSB_LIBRARY "\/usr\/lib\/x86_64-linux-gnu\/libusb-1.0.so" CACHE FILEPATH "Path to libusb library" FORCE)/' CMakeLists.txt
-        sed -i 's/find_path(LIBUSB_INCLUDE_DIR NAMES libusb.h PATH_SUFFIXES libusb-1.0)/set(LIBUSB_INCLUDE_DIR "\/usr\/include\/libusb-1.0" CACHE PATH "Path to libusb include dir" FORCE)/' CMakeLists.txt
-        sed -i 's/if(LIBUSB_LIBRARY AND LIBUSB_INCLUDE_DIR)/if(TRUE)/' CMakeLists.txt
-        sed -i 's/message(STATUS "libUSB is not found - no USB support will be built")/message(STATUS "Lirumlarumlöffelstiel - libUSB not found")/' CMakeLists.txt
+        echo 'cmake_minimum_required(VERSION 3.12)' > CMakeLists.txt
+        echo 'include($ENV{PICO_SDK_PATH}/external/pico_sdk_import.cmake)' >> CMakeLists.txt
+        echo 'project(midi2usbhub C CXX ASM)' >> CMakeLists.txt
+        echo 'set(CMAKE_C_STANDARD 11)' >> CMakeLists.txt
+        echo 'set(CMAKE_CXX_STANDARD 17)' >> CMakeLists.txt
+        echo 'pico_sdk_init()' >> CMakeLists.txt
+        echo 'add_executable(${PROJECT_NAME} src/main.c src/midi2usbhub.c src/cli.c src/preset_manager.c)' >> CMakeLists.txt
+        echo 'pico_enable_stdio_usb(${PROJECT_NAME} 0)' >> CMakeLists.txt
+        echo 'pico_enable_stdio_uart(${PROJECT_NAME} 1)' >> CMakeLists.txt
+        echo 'pico_add_extra_outputs(${PROJECT_NAME})' >> CMakeLists.txt
+        echo 'add_subdirectory(lib/tinyusb lib/tinyusb)' >> CMakeLists.txt
+        echo 'add_subdirectory(lib/usb_midi_host lib/usb_midi_host)' >> CMakeLists.txt
+        echo 'set(LIBUSB_LIBRARY "/usr/lib/x86_64-linux-gnu/libusb-1.0.so" CACHE FILEPATH "Path to libusb library" FORCE)' >> CMakeLists.txt
+        echo 'set(LIBUSB_INCLUDE_DIR "/usr/include/libusb-1.0" CACHE PATH "Path to libusb include dir" FORCE)' >> CMakeLists.txt
+        echo 'message(STATUS "libUSB forced - building with USB support")' >> CMakeLists.txt
+        echo 'add_definitions(-DUSE_USB=1)' >> CMakeLists.txt
+        echo 'target_include_directories(${PROJECT_NAME}.elf PRIVATE ${LIBUSB_INCLUDE_DIR} ${CMAKE_CURRENT_LIST_DIR}/src)' >> CMakeLists.txt
+        echo 'target_link_libraries(${PROJECT_NAME}.elf pico_stdlib tinyusb_host tinyusb_board usb_midi_host ${LIBUSB_LIBRARY})' >> CMakeLists.txt
         cat CMakeLists.txt
 
     - name: Build the project
