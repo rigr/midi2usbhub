@@ -34,13 +34,14 @@ jobs:
 
     - name: Modify and build project
       run: |
-        # Modify CMakeLists.txt
-        sed -i 's/find_library(LIBUSB_LIBRARY NAMES usb-1.0 libusb-1.0)/set(LIBUSB_LIBRARY "\/usr\/lib\/x86_64-linux-gnu\/libusb-1.0.so" CACHE FILEPATH "Path to libusb library" FORCE)/' CMakeLists.txt
-        sed -i 's/find_path(LIBUSB_INCLUDE_DIR NAMES libusb.h PATH_SUFFIXES libusb-1.0)/set(LIBUSB_INCLUDE_DIR "\/usr\/include\/libusb-1.0" CACHE PATH "Path to libusb include dir" FORCE)/' CMakeLists.txt
-        sed -i 's/if(LIBUSB_LIBRARY AND LIBUSB_INCLUDE_DIR)/if(TRUE)/' CMakeLists.txt
-        sed -i 's/message(STATUS "libUSB is not found - no USB support will be built")/message(STATUS "libUSB forced - building with USB support")/' CMakeLists.txt
-        sed -i 's/target_include_directories(${PROJECT_NAME}.elf PRIVATE ${LIBUSB_INCLUDE_DIR})/target_include_directories(${PROJECT_NAME} PRIVATE ${LIBUSB_INCLUDE_DIR})/' CMakeLists.txt
-        sed -i 's/target_link_libraries(${PROJECT_NAME}.elf ${LIBUSB_LIBRARY})/target_link_libraries(${PROJECT_NAME} ${LIBUSB_LIBRARY})/' CMakeLists.txt
+        # Replace the entire libusb block
+        sed -i '/find_library(LIBUSB_LIBRARY NAMES usb-1.0 libusb-1.0)/,/endif()/c\
+        set(LIBUSB_LIBRARY "/usr/lib/x86_64-linux-gnu/libusb-1.0.so" CACHE FILEPATH "Path to libusb library" FORCE)\n\
+        set(LIBUSB_INCLUDE_DIR "/usr/include/libusb-1.0" CACHE PATH "Path to libusb include dir" FORCE)\n\
+        message(STATUS "libUSB forced - building with USB support")\n\
+        add_definitions(-DUSE_USB=1)\n\
+        target_include_directories(${PROJECT_NAME} PRIVATE ${LIBUSB_INCLUDE_DIR})\n\
+        target_link_libraries(${PROJECT_NAME} ${LIBUSB_LIBRARY})' CMakeLists.txt
         echo "CMakeLists.txt after modification:"
         cat CMakeLists.txt
         
@@ -49,7 +50,7 @@ jobs:
         cd build
         rm -rf *  # Clear any existing cache
         echo "CMakeLists.txt before cmake:"
-        cat ../CMakeLists.txt  # Verify the file hasn't changed
+        cat ../CMakeLists.txt
         cmake .. -DPICO_BOARD=pico -DPICO_SDK_PATH=${{ env.PICO_SDK_PATH }} -DCMAKE_FRESH=ON
         make
 
