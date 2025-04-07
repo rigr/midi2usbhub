@@ -1,0 +1,41 @@
+name: Build midi2usbhub UF2
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:  # Ermöglicht manuelles Auslösen des Workflows
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        submodules: recursive  # Lädt auch die Submodule (wichtig für pico-sdk)
+
+    - name: Install dependencies
+      run: |
+        sudo apt update
+        sudo apt install -y cmake gcc-arm-none-eabi g++ build-essential
+
+    - name: Setup Pico SDK
+      run: |
+        git clone https://github.com/raspberrypi/pico-sdk.git --branch 2.0.0
+        cd pico-sdk
+        git submodule update --init
+        export PICO_SDK_PATH=$(pwd)
+
+    - name: Build the project
+      run: |
+        mkdir build
+        cd build
+        cmake .. -DPICO_BOARD=pico
+        make
+
+    - name: Upload UF2 artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: midi2usbhub.uf2
+        path: build/midi2usbhub.uf2
