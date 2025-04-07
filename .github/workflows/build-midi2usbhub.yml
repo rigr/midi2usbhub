@@ -27,6 +27,13 @@ jobs:
         git submodule update --init
         echo "PICO_SDK_PATH=$(pwd)" >> $GITHUB_ENV
 
+    - name: Verify libusb installation
+      run: |
+        echo "Checking libusb include path:"
+        ls -l /usr/include/libusb-1.0/libusb.h || echo "libusb.h not found"
+        echo "Checking libusb library path:"
+        ls -l /usr/lib/x86_64-linux-gnu/libusb-1.0.so || echo "libusb-1.0.so not found"
+
     - name: Build the project
       run: |
         mkdir build
