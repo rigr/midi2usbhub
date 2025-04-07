@@ -32,8 +32,9 @@ jobs:
         ls -l /usr/include/libusb-1.0/libusb.h || echo "libusb.h not found"
         ls -l /usr/lib/x86_64-linux-gnu/libusb-1.0.so || echo "libusb-1.0.so not found"
 
-    - name: Modify CMakeLists.txt to force libusb detection
+    - name: Modify and build project
       run: |
+        # Modify CMakeLists.txt
         sed -i 's/find_library(LIBUSB_LIBRARY NAMES usb-1.0 libusb-1.0)/set(LIBUSB_LIBRARY "\/usr\/lib\/x86_64-linux-gnu\/libusb-1.0.so" CACHE FILEPATH "Path to libusb library" FORCE)/' CMakeLists.txt
         sed -i 's/find_path(LIBUSB_INCLUDE_DIR NAMES libusb.h PATH_SUFFIXES libusb-1.0)/set(LIBUSB_INCLUDE_DIR "\/usr\/include\/libusb-1.0" CACHE PATH "Path to libusb include dir" FORCE)/' CMakeLists.txt
         sed -i 's/if(LIBUSB_LIBRARY AND LIBUSB_INCLUDE_DIR)/if(TRUE)/' CMakeLists.txt
@@ -41,12 +42,12 @@ jobs:
         sed -i 's/target_include_directories(${PROJECT_NAME}.elf PRIVATE ${LIBUSB_INCLUDE_DIR})/target_include_directories(${PROJECT_NAME} PRIVATE ${LIBUSB_INCLUDE_DIR})/' CMakeLists.txt
         sed -i 's/target_link_libraries(${PROJECT_NAME}.elf ${LIBUSB_LIBRARY})/target_link_libraries(${PROJECT_NAME} ${LIBUSB_LIBRARY})/' CMakeLists.txt
         cat CMakeLists.txt
-
-    - name: Build the project
-      run: |
-        mkdir build
+        
+        # Build immediately in the same step
+        mkdir -p build
         cd build
-        cmake .. -DPICO_BOARD=pico -DPICO_SDK_PATH=${{ env.PICO_SDK_PATH }} -DCMAKE_FRESH=ON
+        rm -rf *  # Clear any existing cache
+        cmake .. -DPICO_BOARD=pico -DPICO_SDK_PATH=${{ env.PICO_SDK_PATH }}
         make
 
     - name: Upload UF2 artifact
