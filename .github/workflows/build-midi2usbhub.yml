@@ -34,6 +34,11 @@ jobs:
         echo "Checking libusb library path:"
         ls -l /usr/lib/x86_64-linux-gnu/libusb-1.0.so || echo "libusb-1.0.so not found"
 
+    - name: Modify CMakeLists.txt for debugging
+      run: |
+        sed -i '/find_path(LIBUSB_INCLUDE_DIR/a message(STATUS "LIBUSB_LIBRARY: ${LIBUSB_LIBRARY}")' CMakeLists.txt
+        sed -i '/find_path(LIBUSB_INCLUDE_DIR/a message(STATUS "LIBUSB_INCLUDE_DIR: ${LIBUSB_INCLUDE_DIR}")' CMakeLists.txt
+
     - name: Build the project
       run: |
         mkdir build
@@ -41,7 +46,7 @@ jobs:
         cmake .. -DPICO_BOARD=pico -DPICO_SDK_PATH=${{ env.PICO_SDK_PATH }} \
           -DLIBUSB_INCLUDE_DIR=/usr/include/libusb-1.0 \
           -DLIBUSB_LIBRARY=/usr/lib/x86_64-linux-gnu/libusb-1.0.so \
-          -DCMAKE_VERBOSE_MAKEFILE=ON
+          -DCMAKE_VERBOSE_MAKEFILE=ON -DCMAKE_FRESH=ON
         make
 
     - name: Upload UF2 artifact
