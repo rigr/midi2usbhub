@@ -38,7 +38,10 @@ jobs:
       run: |
         mkdir build
         cd build
-        cmake .. -DPICO_BOARD=pico -DPICO_SDK_PATH=${{ env.PICO_SDK_PATH }} -DLIBUSB_INCLUDE_DIR=/usr/include/libusb-1.0 -DLIBUSB_LIBRARY=/usr/lib/x86_64-linux-gnu/libusb-1.0.so
+        cmake .. -DPICO_BOARD=pico -DPICO_SDK_PATH=${{ env.PICO_SDK_PATH }} \
+          -DLIBUSB_INCLUDE_DIR=/usr/include/libusb-1.0 \
+          -DLIBUSB_LIBRARY=/usr/lib/x86_64-linux-gnu/libusb-1.0.so \
+          -DCMAKE_VERBOSE_MAKEFILE=ON
         make
 
     - name: Upload UF2 artifact
