@@ -18,14 +18,15 @@ jobs:
     - name: Install dependencies
       run: |
         sudo apt update
-        sudo apt install -y cmake g++ build-essential libusb-1.0-0-dev
+        sudo apt install -y cmake g++ build-essential libusb-1.0-0-dev make  # make explizit hinzufügen
         # Installiere die neuere Toolchain
         wget https://developer.arm.com/-/media/Files/downloads/gnu/13.2.rel1/binrel/arm-gnu-toolchain-13.2.rel1-x86_64-arm-none-eabi.tar.xz
         tar -xJf arm-gnu-toolchain-13.2.rel1-x86_64-arm-none-eabi.tar.xz
-        # Setze den Pfad für die aktuelle Shell
+        # Füge Toolchain zum PATH hinzu und mache es persistent
+        echo "$(pwd)/arm-gnu-toolchain-13.2.rel1-x86_64-arm-none-eabi/bin" >> $GITHUB_PATH
         export PATH="$(pwd)/arm-gnu-toolchain-13.2.rel1-x86_64-arm-none-eabi/bin:$PATH"
-        # Überprüfe, ob der Compiler verfügbar ist
         arm-none-eabi-gcc --version || echo "Compiler not found"
+        which make || echo "make not found"
 
     - name: Setup Pico SDK
       run: |
@@ -48,6 +49,7 @@ jobs:
 
     - name: Build project
       run: |
+        # PATH ist bereits via $GITHUB_PATH gesetzt, aber für Sicherheit wiederholen
         export PATH="$(pwd)/arm-gnu-toolchain-13.2.rel1-x86_64-arm-none-eabi/bin:$PATH"
         cat CMakeLists.txt
         mkdir -p build
