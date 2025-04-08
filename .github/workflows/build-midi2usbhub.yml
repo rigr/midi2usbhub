@@ -18,13 +18,13 @@ jobs:
     - name: Install dependencies
       run: |
         sudo apt update
-        sudo apt install -y cmake g++ build-essential libusb-1.0-0-dev make  # make explizit hinzufügen
+        sudo apt install -y cmake g++ build-essential libusb-1.0-0-dev make
         # Installiere die neuere Toolchain
         wget https://developer.arm.com/-/media/Files/downloads/gnu/13.2.rel1/binrel/arm-gnu-toolchain-13.2.rel1-x86_64-arm-none-eabi.tar.xz
         tar -xJf arm-gnu-toolchain-13.2.rel1-x86_64-arm-none-eabi.tar.xz
-        # Füge Toolchain zum PATH hinzu und mache es persistent
-        echo "$(pwd)/arm-gnu-toolchain-13.2.rel1-x86_64-arm-none-eabi/bin" >> $GITHUB_PATH
-        export PATH="$(pwd)/arm-gnu-toolchain-13.2.rel1-x86_64-arm-none-eabi/bin:$PATH"
+        # Setze absoluten Pfad für die Toolchain
+        echo "/home/runner/work/midi2usbhub/midi2usbhub/arm-gnu-toolchain-13.2.rel1-x86_64-arm-none-eabi/bin" >> $GITHUB_PATH
+        export PATH="/home/runner/work/midi2usbhub/midi2usbhub/arm-gnu-toolchain-13.2.rel1-x86_64-arm-none-eabi/bin:$PATH"
         arm-none-eabi-gcc --version || echo "Compiler not found"
         which make || echo "make not found"
 
@@ -49,13 +49,13 @@ jobs:
 
     - name: Build project
       run: |
-        # PATH ist bereits via $GITHUB_PATH gesetzt, aber für Sicherheit wiederholen
-        export PATH="$(pwd)/arm-gnu-toolchain-13.2.rel1-x86_64-arm-none-eabi/bin:$PATH"
+        # Verwende absoluten Pfad für die Toolchain
+        export PATH="/home/runner/work/midi2usbhub/midi2usbhub/arm-gnu-toolchain-13.2.rel1-x86_64-arm-none-eabi/bin:$PATH"
         cat CMakeLists.txt
         mkdir -p build
         cd build
         rm -rf *
-        cmake .. -DPICO_BOARD=pico -DPICO_SDK_PATH=${{ env.PICO_SDK_PATH }} -DPICO_TOOLCHAIN_PATH=$(pwd)/../arm-gnu-toolchain-13.2.rel1-x86_64-arm-none-eabi/bin -DCMAKE_FRESH=ON
+        cmake .. -DPICO_BOARD=pico -DPICO_SDK_PATH=${{ env.PICO_SDK_PATH }} -DPICO_TOOLCHAIN_PATH=/home/runner/work/midi2usbhub/midi2usbhub/arm-gnu-toolchain-13.2.rel1-x86_64-arm-none-eabi/bin -DCMAKE_FRESH=ON
         make
 
     - name: Upload UF2 artifact
