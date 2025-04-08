@@ -18,7 +18,11 @@ jobs:
     - name: Install dependencies
       run: |
         sudo apt update
-        sudo apt install -y cmake gcc-arm-none-eabi g++ build-essential libusb-1.0-0-dev
+        sudo apt install -y cmake g++ build-essential libusb-1.0-0-dev
+        # Installiere eine neuere Version von gcc-arm-none-eabi
+        wget https://developer.arm.com/-/media/Files/downloads/gnu/13.2.rel1/binrel/arm-gnu-toolchain-13.2.rel1-x86_64-arm-none-eabi.tar.xz
+        tar -xJf arm-gnu-toolchain-13.2.rel1-x86_64-arm-none-eabi.tar.xz
+        echo "$(pwd)/arm-gnu-toolchain-13.2.rel1-x86_64-arm-none-eabi/bin" >> $GITHUB_PATH
 
     - name: Setup Pico SDK
       run: |
@@ -36,7 +40,6 @@ jobs:
       run: |
         git submodule sync --recursive
         git submodule update --init --recursive
-        # Manual cloning only for usb_midi_host
         [ -d "lib/usb_midi_host" ] || git clone https://github.com/rppicomidi/usb_midi_host.git lib/usb_midi_host
         ls -ld lib/usb_midi_host || echo "usb_midi_host still not found"
 
