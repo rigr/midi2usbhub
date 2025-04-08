@@ -34,13 +34,15 @@ jobs:
 
     - name: Build project
       run: |
+        # Patch CMakeLists.txt to include TinyUSB
+        sed -i '/add_subdirectory(${CMAKE_CURRENT_LIST_DIR}\/lib\/usb_midi_host)/i add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/lib/tinyusb lib/tinyusb)' CMakeLists.txt
+        cat CMakeLists.txt
+        
         mkdir -p build
         cd build
-        rm -rf *  # Clear any existing cache
-        cmake .. -DPICO_BOARD=pico -DPICO_SDK_PATH=${{ env.PICO_SDK_PATH }} -DCMAKE_FRESH=ON -DUSE_USB=1
+        rm -rf *
+        cmake .. -DPICO_BOARD=pico -DPICO_SDK_PATH=${{ env.PICO_SDK_PATH }} -DCMAKE_FRESH=ON
         make
-        # Debug: Check if USB support is enabled
-        grep -r "USE_USB" CMakeCache.txt || echo "USE_USB not found in cache"
 
     - name: Upload UF2 artifact
       uses: actions/upload-artifact@v4
