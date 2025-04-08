@@ -19,10 +19,13 @@ jobs:
       run: |
         sudo apt update
         sudo apt install -y cmake g++ build-essential libusb-1.0-0-dev
-        # Installiere eine neuere Version von gcc-arm-none-eabi
+        # Installiere die neuere Toolchain
         wget https://developer.arm.com/-/media/Files/downloads/gnu/13.2.rel1/binrel/arm-gnu-toolchain-13.2.rel1-x86_64-arm-none-eabi.tar.xz
         tar -xJf arm-gnu-toolchain-13.2.rel1-x86_64-arm-none-eabi.tar.xz
-        echo "$(pwd)/arm-gnu-toolchain-13.2.rel1-x86_64-arm-none-eabi/bin" >> $GITHUB_PATH
+        # Setze den Pfad für die aktuelle Shell
+        export PATH="$(pwd)/arm-gnu-toolchain-13.2.rel1-x86_64-arm-none-eabi/bin:$PATH"
+        # Überprüfe, ob der Compiler verfügbar ist
+        arm-none-eabi-gcc --version || echo "Compiler not found"
 
     - name: Setup Pico SDK
       run: |
@@ -45,11 +48,12 @@ jobs:
 
     - name: Build project
       run: |
+        export PATH="$(pwd)/arm-gnu-toolchain-13.2.rel1-x86_64-arm-none-eabi/bin:$PATH"
         cat CMakeLists.txt
         mkdir -p build
         cd build
         rm -rf *
-        cmake .. -DPICO_BOARD=pico -DPICO_SDK_PATH=${{ env.PICO_SDK_PATH }} -DCMAKE_FRESH=ON
+        cmake .. -DPICO_BOARD=pico -DPICO_SDK_PATH=${{ env.PICO_SDK_PATH }} -DPICO_TOOLCHAIN_PATH=$(pwd)/../arm-gnu-toolchain-13.2.rel1-x86_64-arm-none-eabi/bin -DCMAKE_FRESH=ON
         make
 
     - name: Upload UF2 artifact
