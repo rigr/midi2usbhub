@@ -32,25 +32,11 @@ jobs:
         ls -l /usr/include/libusb-1.0/libusb.h || echo "libusb.h not found"
         ls -l /usr/lib/x86_64-linux-gnu/libusb-1.0.so || echo "libusb-1.0.so not found"
 
-    - name: Modify and build project
+    - name: Build project
       run: |
-        # Replace the entire libusb block
-        sed -i '/find_library(LIBUSB_LIBRARY NAMES usb-1.0 libusb-1.0)/,/endif()/c\
-        set(LIBUSB_LIBRARY "/usr/lib/x86_64-linux-gnu/libusb-1.0.so" CACHE FILEPATH "Path to libusb library" FORCE)\n\
-        set(LIBUSB_INCLUDE_DIR "/usr/include/libusb-1.0" CACHE PATH "Path to libusb include dir" FORCE)\n\
-        message(STATUS "libUSB forced - building with USB support")\n\
-        add_definitions(-DUSE_USB=1)\n\
-        target_include_directories(${PROJECT_NAME} PRIVATE ${LIBUSB_INCLUDE_DIR})\n\
-        target_link_libraries(${PROJECT_NAME} ${LIBUSB_LIBRARY})' CMakeLists.txt
-        echo "CMakeLists.txt after modification:"
-        cat CMakeLists.txt
-        
-        # Build immediately in the same step
         mkdir -p build
         cd build
         rm -rf *  # Clear any existing cache
-        echo "CMakeLists.txt before cmake:"
-        cat ../CMakeLists.txt
         cmake .. -DPICO_BOARD=pico -DPICO_SDK_PATH=${{ env.PICO_SDK_PATH }} -DCMAKE_FRESH=ON
         make
 
