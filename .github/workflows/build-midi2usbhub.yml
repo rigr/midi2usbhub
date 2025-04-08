@@ -53,7 +53,7 @@ jobs:
         mkdir -p build
         cd build
         rm -rf *
-        cmake .. -DPICO_BOARD=pico -DPICO_SDK_PATH=${{ env.PICO_SDK_PATH }} -DCMAKE_TOOLCHAIN_FILE=${{ env.PICO_SDK_PATH }}/cmake/preload/toolchains/pico_arm_gcc.cmake -DCMAKE_FRESH=ON
+        cmake .. -DPICO_BOARD=pico -DPICO_SDK_PATH=${{ env.PICO_SDK_PATH }} -DCMAKE_FRESH=ON
         make
 
     - name: Upload UF2 artifact
