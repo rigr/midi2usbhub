@@ -37,8 +37,10 @@ jobs:
         mkdir -p build
         cd build
         rm -rf *  # Clear any existing cache
-        cmake .. -DPICO_BOARD=pico -DPICO_SDK_PATH=${{ env.PICO_SDK_PATH }} -DCMAKE_FRESH=ON
+        cmake .. -DPICO_BOARD=pico -DPICO_SDK_PATH=${{ env.PICO_SDK_PATH }} -DCMAKE_FRESH=ON -DUSE_USB=1
         make
+        # Debug: Check if USB support is enabled
+        grep -r "USE_USB" CMakeCache.txt || echo "USE_USB not found in cache"
 
     - name: Upload UF2 artifact
       uses: actions/upload-artifact@v4
