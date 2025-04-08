@@ -36,8 +36,11 @@ jobs:
       run: |
         git submodule sync --recursive
         git submodule update --init --recursive
-        ls -ld lib/tinyusb || echo "tinyusb not found"
-        ls -ld lib/usb_midi_host || echo "usb_midi_host not found"
+        # Manual cloning if submodules are missing
+        [ -d "lib/tinyusb" ] || git clone https://github.com/hathach/tinyusb.git lib/tinyusb
+        [ -d "lib/usb_midi_host" ] || git clone https://github.com/rppicomidi/usb_midi_host.git lib/usb_midi_host
+        ls -ld lib/tinyusb || echo "tinyusb still not found"
+        ls -ld lib/usb_midi_host || echo "usb_midi_host still not found"
 
     - name: Build project
       run: |
