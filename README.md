@@ -1,4 +1,4 @@
-I used this wholerepo and forked it to let github build the .uf2 file what finally worked.
+I used this whole repo and forked it to let github build the .uf2 file what finally worked.
 Still need to build the physical part, though.
 Thanks to the original coder!
 Richard
