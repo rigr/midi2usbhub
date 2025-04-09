@@ -1,7 +1,11 @@
-I used this whole repo and forked it to let github build the .uf2 file what finally worked.
-Still need to build the physical part, though.
+# PLEASE NOTE
+I used this whole repo and forked it to let github build the .uf2 file what finally worked. 
+I Still need to build the physical part, though.
+
 Thanks to the original coder!
+
 Richard
+
 
 # midi2usbhub
 Use a Raspberry Pi Pico to interconnect MIDI devices via a USB hub or old school MIDI.
