@@ -24,39 +24,39 @@
 #include "tusb.h"  // Bereits vorhanden, für TinyUSB
 
 // USB String-Deskriptoren
-char const* string_desc_arr[] = {
-    (const char[]) { 0x09, 0x04 },   // 0: LangID = English (0x0409)
-    "My Company",                    // 1: Manufacturer
-    "RPI-PICO-Name-Name",            // 2: Product
-    "123456",                        // 3: Serial Number
-};
+// char const* string_desc_arr[] = {
+//     (const char[]) { 0x09, 0x04 },   // 0: LangID = English (0x0409)
+//    "My Company",                    // 1: Manufacturer
+//    "RPI-PICO-Name-Name",            // 2: Product
+//    "123456",                        // 3: Serial Number
+// };
 
 // TinyUSB Callback für String-Deskriptoren (Device Mode)
-uint16_t const* tud_descriptor_string_cb(uint8_t index, uint16_t langid) {
-    static uint16_t desc_str[32];
-    uint8_t chr_count;
+// uint16_t const* tud_descriptor_string_cb(uint8_t index, uint16_t langid) {
+//     static uint16_t desc_str[32];
+//     uint8_t chr_count;
 
-    if (index == 0) {
-        desc_str[1] = (TUSB_DESC_STRING << 8) | (2 * 1 + 2);
-        desc_str[2] = string_desc_arr[0][0] | (string_desc_arr[0][1] << 8);
-        return desc_str;
-    }
+ //    if (index == 0) {
+ //        desc_str[1] = (TUSB_DESC_STRING << 8) | (2 * 1 + 2);
+//         desc_str[2] = string_desc_arr[0][0] | (string_desc_arr[0][1] << 8);
+ //        return desc_str;
+ //    }
 
-    if (index >= sizeof(string_desc_arr) / sizeof(string_desc_arr[0])) {
-        return NULL;
-    }
+//     if (index >= sizeof(string_desc_arr) / sizeof(string_desc_arr[0])) {
+ //        return NULL;
+ //    }
 
-    const char* str = string_desc_arr[index];
-    chr_count = strlen(str);
-    if (chr_count > 31) chr_count = 31;  // Begrenze auf maximale Länge
+//     const char* str = string_desc_arr[index];
+//     chr_count = strlen(str);
+//     if (chr_count > 31) chr_count = 31;  // Begrenze auf maximale Länge
 
-    desc_str[0] = (TUSB_DESC_STRING << 8) | (2 * chr_count + 2);
-    for (uint8_t i = 0; i < chr_count; i++) {
-        desc_str[1 + i] = str[i];
-    }
-
-    return desc_str;
-}
+//    desc_str[0] = (TUSB_DESC_STRING << 8) | (2 * chr_count + 2);
+//     for (uint8_t i = 0; i < chr_count; i++) {
+//        desc_str[1 + i] = str[i];
+//     }
+// 
+//    return desc_str;
+// }
 
 // Rest der Datei bleibt unverändert bis hierher
 void rppicomidi::Midi2usbhub::serialize(std::string &serialized_string)
