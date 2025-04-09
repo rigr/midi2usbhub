@@ -29,7 +29,6 @@ add_executable(midi2usbhub
 )
 
 pico_enable_stdio_uart(midi2usbhub 1)
-# // pico_enable_stdio_usb(midi2usbhub 1)  # Hinzufügen für USB-Device-Modus
 
 target_include_directories(midi2usbhub PRIVATE
  ${CMAKE_CURRENT_LIST_DIR}
