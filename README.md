@@ -1,5 +1,5 @@
 # PLEASE NOTE
-I used this whole repo and forked it to let github build the .uf2 file what finally worked. 
+I used this whole repo and forked it from https://github.com/rppicomidi/midi2usbhub to let github build the .uf2 file what finally worked. 
 I Still need to build the physical part, though.
 
 Thanks to the original coder!
